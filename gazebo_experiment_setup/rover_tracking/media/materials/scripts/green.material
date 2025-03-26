@@ -1,0 +1,17 @@
+material green
+{
+  technique
+  {
+    pass
+    {
+      lighting off
+      texture_unit
+      {
+        texture solid_green.png
+        filtering none none none
+        scale 1.0 1.0
+      }
+    }
+  }
+}
+

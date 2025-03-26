@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="empty_green_world">
+    
+    <!--  Fixed: Added 'type="directional"' to light -->
+    <light name="sun" type="directional">
+      <cast_shadows>false</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>2 2 2 1</diffuse>  <!-- Increased diffuse light -->
+      <specular>0.5 0.5 0.5 1</specular>  <!-- Increased specular reflection -->
+      <attenuation>
+        <range>1000</range>
+        <constant>1</constant>  <!-- Adjusted for brighter light -->
+        <linear>0.005</linear>  <!-- Lower linear attenuation -->
+        <quadratic>0.0005</quadratic>  <!-- Lower quadratic attenuation -->
+      </attenuation>
+      <direction>-0.5 -0.5 -1</direction>  <!-- Fixed light direction -->
+    </light>
+
+    <!--  Fixed: Ensure Gazebo Finds Custom Model -->
+    <include>
+      <uri>model://custom_ground_plane</uri>
+      <pose>0 0 0 0 0 0</pose>  <!-- Ensures correct placement -->
+    </include>
+
+  </world>
+</sdf>
+

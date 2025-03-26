@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Start Gazebo with empty world -->
+  <include file="$(find hector_gazebo_worlds)/launch/start.launch"/>
+
+  <!-- Spawn Hector Quadrotor with downward camera -->
+  <group ns="hector">
+    <param name="tf_prefix" value="hector_tf" />
+
+    <!-- Include the spawn_quadrotor.launch file -->
+    <include file="$(find hector_quadrotor_gazebo)/launch/spawn_quadrotor.launch" >
+      <!-- Set the model to the downward camera version -->
+      <arg name="model" value="$(find hector_quadrotor_description)/urdf/quadrotor_downward_cam.gazebo.xacro"/>
+
+      <!-- Define other spawn_quadrotor.launch arguments -->
+      <arg name="name" value="hector_quadrotor"/> <!-- Name of the robot model -->
+      <arg name="x" value="0.4"/> 
+      <arg name="y" value="0.0"/> 
+      <arg name="z" value="1.0"/> 
+
+
+    </include>
+  </group>
+  
+  <!--rosparam command="load" file="$(find husky_control)/config/control.yaml" /-->
+  <rosparam file="$(find rover_tracking)/config/husky_control.yaml" command="load"/>
+
+  <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'" />
+
+
+  <!-- Spawn the Husky model in Gazebo -->
+  <node name="spawn_husky_model" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model husky -x 0 -y 0 -z 0" />
+
+</launch>
+
+
