@@ -59,3 +59,5 @@ This repository contains the dataset
 | Batch size      | 64        |
 | LR             | 0.001     |
 | LR Decay Rate  | 0.85      |
+
+![image](https://github.com/user-attachments/assets/d4cf0343-529e-4ff4-bcb2-7077a235e38a)
