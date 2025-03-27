@@ -1,6 +1,7 @@
 # UAV Fly to Target 
 
-This repository contains the dataset
+This repository contains the dataset, code for model architecture and training and gazebo environment for experimentation. Model architecture, training hyper-parameters and NCP parameters.
+
 ### Table: Model Architecture Summary
 
 | **Layer (Type)**                        | **Activation** | **Param #**  |
