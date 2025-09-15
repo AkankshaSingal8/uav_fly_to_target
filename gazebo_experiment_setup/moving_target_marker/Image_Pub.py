@@ -18,10 +18,18 @@ import apriltag
 global centres_data
 
 centres_data = Float32MultiArray()
-
+goal_height = 4
 
 def converter(data):
-    pt_star = np.array([364, 293, 276, 293, 276, 205, 364, 205])
+    global goal_height
+    # pt_star = np.array([364, 293, 276, 293, 276, 205, 364, 205])
+    if goal_height == 3:
+        pt_star = np.array([364, 293, 276, 293,276, 205,364, 205]) 
+    elif goal_height == 4:
+        pt_star = np.array([351, 278, 289, 278, 289, 215, 351, 215]) #height 4
+    elif goal_height == 5:
+        pt_star = np.array([344, 269, 296, 269, 296, 221, 344, 221]) #Desired pixel points location height 5
+    
     try:
         # Convert ROS Image message to OpenCV format
         cv_image = CvBridge().imgmsg_to_cv2(data, "bgr8")
@@ -72,6 +80,7 @@ def converter(data):
                                       r.corners[1][0], r.corners[1][1],
                                       r.corners[2][0], r.corners[2][1],
                                       r.corners[3][0], r.corners[3][1]])
+        # print(centres_data.data)
 
     except CvBridgeError as e:
         print(e)

@@ -22,7 +22,16 @@ lin_vel = np.zeros(3)
 
 # Open CSV file
 goal_height = 4
-CSV_FILE = f"./new_results_with_orientation/ibvs_feature_error_marker_x1_y1_z{goal_height + 3}_goal{goal_height}.csv"
+z_init = 7
+x_val = 1
+y_val = 1
+
+position_tolerance = 0.1
+orientation_tolerance = 0.2
+goal_position = (0.4, 0, goal_height)
+goal_orientation = (0.0, 0.0, -1.0, 0.0) 
+
+CSV_FILE = f"./ours/ibvs_feature_error_marker_x{x_val}_y{y_val}_z{z_init}_goal{goal_height}.csv"
 csv_file = open(CSV_FILE, "w", newline="")
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(["timestamp", "e_v_x", "e_v_y", "e_v_a", "e_alpha"])  # CSV headers
@@ -126,7 +135,9 @@ def converter(data):
         rospy.loginfo(f"Logged: e_v={e_v}, e_alpha={e_alpha}")
 
 def Orient_conversion(data):
-    global pos_hector, euler_hector, recording_active, goal_height
+    global pos_hector, euler_hector, recording_active, goal_height, z_init
+    global position_tolerance, orientation_tolerance, goal_position, goal_orientation
+
     pos_hector = np.array([data.pose.pose.position.x, data.pose.pose.position.y, data.pose.pose.position.z])
     quaternion = [data.pose.pose.orientation.x, data.pose.pose.orientation.y, data.pose.pose.orientation.z, data.pose.pose.orientation.w]
     euler_hector = tf.transformations.euler_from_quaternion(quaternion)
@@ -138,10 +149,30 @@ def Orient_conversion(data):
         data.pose.pose.position.z
     )
 
+    # Get UAV orientation (quaternion)
+    current_orientation = (
+        data.pose.pose.orientation.x,
+        data.pose.pose.orientation.y,
+        data.pose.pose.orientation.z,
+        data.pose.pose.orientation.w
+    )
+
     # Start recording once height is >= 6 meters
-    if current_position[2] >= (goal_height + 3):
+    if current_position[2] >= z_init:
         recording_active = True
         print("Recording Started")
+
+    if (
+        abs(current_position[0] - goal_position[0]) <= position_tolerance and
+        abs(current_position[1] - goal_position[1]) <= position_tolerance and
+        abs(current_position[2] - goal_position[2]) <= position_tolerance and
+        abs(current_orientation[0] - goal_orientation[0]) <= orientation_tolerance and
+        abs(current_orientation[1] - goal_orientation[1]) <= orientation_tolerance and
+        (abs(current_orientation[2] - goal_orientation[2]) <= orientation_tolerance or abs(current_orientation[2] - 1) <= orientation_tolerance) and
+        abs(current_orientation[3] - goal_orientation[3]) <= orientation_tolerance
+    ) and recording_active == True:
+        rospy.loginfo("Goal position and orientation reached.")
+        rospy.signal_shutdown("Goal reached, stopping the node.")
 
 def Controller():
     rospy.init_node("IBVS_Control", anonymous=False)

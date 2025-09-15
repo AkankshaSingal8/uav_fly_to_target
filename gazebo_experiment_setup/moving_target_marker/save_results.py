@@ -16,7 +16,7 @@ IMAGE_SHAPE_CV = (IMAGE_SHAPE[1], IMAGE_SHAPE[0])  # OpenCV shape (width, height
 # OUTPUT_DIR = "output_images"
 goal_height = 4
 z_init = 7
-CSV_FILE = f"./new_results_with_orientation/moving_linear_result_marker_x0.4_y0_z{z_init}_goal{goal_height}_husky0.05.csv"
+CSV_FILE = f"./new_results_with_orientation/capped_moving_linear_result_marker_x0.4_y0_z{z_init}_goal{goal_height}_husky0.1.csv"
 # MSE_CSV_FILE = "./new_results_with_orientation/MSE_markerless_x0.4_y0_z8_goal6.csv"
 
 # Ensure output directory exists

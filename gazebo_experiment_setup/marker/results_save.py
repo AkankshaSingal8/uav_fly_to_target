@@ -15,8 +15,17 @@ IMAGE_SHAPE = (144, 256, 3)  # Target image size (height, width, channels)
 IMAGE_SHAPE_CV = (IMAGE_SHAPE[1], IMAGE_SHAPE[0])  # OpenCV shape (width, height)
 # OUTPUT_DIR = "output_images"
 goal_height = 4
+z_init = 7
+x_val = 1
+y_val = 1
 # {goal_height + 3}
-CSV_FILE = f"./new_results_with_orientation/new_result_marker_x1_y-1_z{goal_height + 3}_goal{goal_height}.csv"
+CSV_FILE = f"./ours/new_result_marker_x{x_val}_y{y_val}_z{z_init}_goal{goal_height}.csv"
+
+position_tolerance = 0.1
+orientation_tolerance = 0.2
+goal_position = (0.4, 0, goal_height)
+goal_orientation = (0.0, 0.0, -1.0, 0.0) 
+
 # MSE_CSV_FILE = "MSE_marker_x0.4_y0_z8_goal6.csv"
 
 # Ensure output directory exists
@@ -61,6 +70,7 @@ csv_writer.writerow(["timestamp", "x", "y", "z", "quat_x", "quat_y", "quat_z", "
 # Callback for odometry data (height & position)
 def odometry_callback(data):  
     global current_position, current_orientation, current_height, recording_active, csv_writer, current_velocity, goal_height
+    global position_tolerance, orientation_tolerance, goal_position, goal_orientation 
 
     current_position = (
         data.pose.pose.position.x,
@@ -77,7 +87,7 @@ def odometry_callback(data):
     )
 
     # Start recording once height is >= 6 meters
-    if current_position[2] >= (goal_height + 3):
+    if current_position[2] >= z_init:
         recording_active = True
         print("Recording Started")
 
@@ -90,6 +100,18 @@ def odometry_callback(data):
             current_velocity.angular.x, current_velocity.angular.y, current_velocity.angular.z
         ])
         csv_file.flush()
+
+    # If goal reached stop recording
+    if (
+        abs(current_position[0] - goal_position[0]) <= position_tolerance and
+        abs(current_position[1] - goal_position[1]) <= position_tolerance and
+        abs(current_position[2] - goal_position[2]) <= position_tolerance and
+        abs(current_orientation[0] - goal_orientation[0]) <= orientation_tolerance and
+        abs(current_orientation[1] - goal_orientation[1]) <= orientation_tolerance and
+        (abs(current_orientation[2] - goal_orientation[2]) <= orientation_tolerance or abs(current_orientation[2] - 1) <= orientation_tolerance) and
+        abs(current_orientation[3] - goal_orientation[3]) <= orientation_tolerance) and recording_active:
+        print("Goal position and orientation reached.")
+        rospy.signal_shutdown("Goal reached. Stopping node.")
     
 
     

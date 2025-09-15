@@ -15,9 +15,9 @@
 
       <!-- Define other spawn_quadrotor.launch arguments -->
       <arg name="name" value="hector_quadrotor"/> <!-- Name of the robot model -->
-      <arg name="x" value="0.4"/> 
-      <arg name="y" value="0.0"/> 
-      <arg name="z" value="1.0"/> 
+      <arg name="x" value="1.0"/> 
+      <arg name="y" value="1.0"/> 
+      <arg name="z" value="0.0"/> 
 
 
     </include>

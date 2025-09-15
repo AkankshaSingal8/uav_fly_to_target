@@ -63,8 +63,8 @@ rospy.loginfo("current working dir")
 rospy.loginfo(os.getcwd())
 root = './retrain_mix_goal_heights_diff_coreset_wscheduler0.85_seed22222_lr0.001_trainloss0.00008_epoch100.h5'
 
-goal_height = 4
-z_init = 7
+goal_height = 3
+z_init = 6
 goal_image_file = f'./marker_goal_images/goal_marker_height{goal_height}.png'
 goal_image = cv2.imread(goal_image_file)
 goal_image = cv2.resize(goal_image, (IMAGE_SHAPE[1], IMAGE_SHAPE[0])) 
@@ -122,6 +122,17 @@ def model_prediction():
     hiddens = output[1:]
     preds = output[0][0]
     vx, vy, vz, omega_z = preds[0], preds[1], preds[2], preds[3]
+    # if abs(vx) <= 0.01:
+    #     vx = 0.0
+    
+    # if abs(vy) <= 0.01:
+    #     vy = 0.0
+    
+    # if abs(vz) <= 0.01:
+    #     vz = 0.0
+    
+    # if abs(omega_z) <= 0.009:
+    #     omega_z = 0.0
     print(f"Printing vel: {vx}, {vy}, {vz}, {omega_z}")
 
     # Set the velocities in the message

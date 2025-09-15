@@ -5,9 +5,10 @@ import kerasncp as kncp
 from kerasncp.tf import LTCCell, WiredCfcCell
 from tensorflow import keras
 import tensorflow as tf
-# from node_cell import *
+from node_cell import *
 # from tf_cfc import CfcCell, MixedCfcCell
 # from tf_cfc import LTCCell as CFCLTCCell
+
 
 IMAGE_SHAPE = (144, 256, 3)
 IMAGE_SHAPE_CV = (IMAGE_SHAPE[1], IMAGE_SHAPE[0])
@@ -24,6 +25,56 @@ DEFAULT_CFC_CONFIG = {
 }
 DEFAULT_NCP_SEED = 22222
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def generate_cnn_model(seq_len, image_shape, 
+                       augmentation_params: Dict = None, 
+                       batch_size=None, 
+                       single_step: bool = False, 
+                       no_norm_layer: bool = False, ):
+    
+    if single_step:
+        inputs = keras.Input(shape=image_shape)
+    else:
+        inputs = keras.Input(batch_input_shape=(batch_size, seq_len, *image_shape))
+
+    x = inputs 
+
+    if not no_norm_layer:
+        x = generate_normalization_layers(x, single_step)
+
+    if augmentation_params is not None:
+        x = generate_augmentation_layers(x, augmentation_params, single_step)
+
+    x = wrap_time(keras.layers.Conv2D(filters=24, kernel_size=(5, 5), strides=(2, 2), activation='relu'), single_step)(
+        x)
+    x = wrap_time(keras.layers.Conv2D(filters=36, kernel_size=(5, 5), strides=(2, 2), activation='relu'), single_step)(
+        x)
+    x = wrap_time(keras.layers.Conv2D(filters=48, kernel_size=(3, 3), strides=(2, 2), activation='relu'), single_step)(
+        x)
+    x = wrap_time(keras.layers.Conv2D(filters=64, kernel_size=(3, 3), strides=(1, 1), activation='relu'), single_step)(
+        x)
+    x = wrap_time(keras.layers.Conv2D(filters=64, kernel_size=(3, 3), strides=(1, 1), activation='relu'), single_step)(
+        x)
+
+    #Flatten Convolution Output
+    x = wrap_time(keras.layers.Flatten(), single_step)(x)
+    x = wrap_time(keras.layers.Dropout(rate=DROPOUT), single_step)(x)
+
+    #Fully Connected Layer 1
+    x = wrap_time(keras.layers.Dense(1000, activation='relu'), single_step)(x)
+    x = wrap_time(keras.layers.Dropout(rate=DROPOUT), single_step)(x)
+
+    #Fully Connected Layer 2
+    x = wrap_time(keras.layers.Dense(100, activation='relu'), single_step)(x)
+    x = wrap_time(keras.layers.Dropout(rate=DROPOUT), single_step)(x)
+
+    #Output Layer 
+    x = wrap_time(keras.layers.Dense(4, use_bias='false'), single_step)(x)
+    output = wrap_time(keras.layers.Reshape((4, 1), name="predicton"), single_step)(x)
+
+    cnn_model = keras.Model([inputs], [output])
+
+    return cnn_model
 
 
 # Shapes for generate_*_model:

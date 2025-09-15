@@ -16,7 +16,7 @@
       <!-- Define other spawn_quadrotor.launch arguments -->
       <arg name="name" value="hector_quadrotor"/> <!-- Name of the robot model -->
       <arg name="x" value="1.0"/> 
-      <arg name="y" value="-1.0"/> 
+      <arg name="y" value="1.0"/> 
       <arg name="z" value="0.0"/> 
 
 
@@ -29,7 +29,6 @@
   <param name="robot_description" command="$(find xacro)/xacro '$(find rover_tracking)/models/custom_husky/husky.urdf.xacro'"/>
   <node name="spawn_husky_model" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model husky -x 0 -y 0 -z 0" />
   
-
 
 </launch>
 

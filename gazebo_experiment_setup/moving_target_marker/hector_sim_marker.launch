@@ -5,6 +5,7 @@
   <include file="$(find hector_gazebo_worlds)/launch/start.launch"/>
 
   <!-- Spawn Hector Quadrotor with downward camera -->
+  
   <group ns="hector">
     <param name="tf_prefix" value="hector_tf" />
 
@@ -16,23 +17,20 @@
       <!-- Define other spawn_quadrotor.launch arguments -->
       <arg name="name" value="hector_quadrotor"/> <!-- Name of the robot model -->
       <arg name="x" value="0.4"/> 
-      <arg name="y" value="0"/> 
-      <arg name="z" value="1.0"/> 
+      <arg name="y" value="1.0"/> 
+      <arg name="z" value="0.0"/> 
 
 
     </include>
   </group>
   
-
   <!-- Spawn the Husky model in Gazebo -->
   <!--node name="spawn_husky_model" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model husky -x 0 -y 0 -z 0" /-->
   <rosparam command="load" file="$(find husky_control)/config/control.yaml"/>
-  <include file="$(find husky_control)/launch/control.launch">
-  </include>
+  <include file="$(find husky_control)/launch/control.launch"></include> 
   <param name="robot_description" command="$(find xacro)/xacro '$(find rover_tracking)/models/custom_husky/husky.urdf.xacro'"/>
   <node name="spawn_husky_model" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model husky -x 0 -y 0 -z 0" />
   
-
 
 </launch>
 

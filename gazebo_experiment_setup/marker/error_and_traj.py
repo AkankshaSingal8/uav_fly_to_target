@@ -95,7 +95,7 @@ if __name__ == '__main__':
                 writer.writerow(["Px", "Py", "Pz"])
 
         # Load the goal image
-        goal_image_file = './marker_goal_images/goal_marker_height4.png'
+        goal_image_file = './marker_goal_images/goal_marker_height5.png'
         goal_image = cv2.imread(goal_image_file)
         if goal_image is None:
             rospy.logerr("Failed to load goal image at: {}".format(goal_image_file))

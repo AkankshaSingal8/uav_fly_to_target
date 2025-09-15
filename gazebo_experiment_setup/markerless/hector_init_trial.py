@@ -15,7 +15,7 @@ from tensorflow.python.keras.models import Functional
 from tensorflow import keras
 import numpy as np
 from matplotlib.image import imread
-from keras_models import generate_ncp_model
+from keras_models import generate_ncp_model, generate_lstm_model, generate_ctrnn_model, generate_cnn_model
 import os
 
 def generate_hidden_list(model: Functional, return_numpy: bool = True):
@@ -61,21 +61,50 @@ tf.config.set_visible_devices([], 'GPU')
 
 rospy.loginfo("current working dir")
 rospy.loginfo(os.getcwd())
-goal_height = 5
-z_initial = 4
-root = './retrain_mix_goal_heights_diff_coreset_wscheduler0.85_seed22222_lr0.001_trainloss0.00008_epoch100.h5'
+
+goal_height = 3
+z_initial = 2
+
+
 goal_image_file = f'./markerless_goal_images/goal_markerless_height{goal_height}.png'
 goal_image = cv2.imread(goal_image_file)
 goal_image = cv2.resize(goal_image, (IMAGE_SHAPE[1], IMAGE_SHAPE[0])) 
 
 DEFAULT_NCP_SEED = 22222
 
+#NCP
+# root = './retrain_mix_goal_heights_diff_coreset_wscheduler0.85_seed22222_lr0.001_trainloss0.00008_epoch100.h5'
+# batch_size = None
+# seq_len = 64
+# augmentation_params = None
+# no_norm_layer = False
+# single_step = True
+# model = generate_ncp_model(seq_len, IMAGE_SHAPE, augmentation_params, batch_size, DEFAULT_NCP_SEED, single_step, no_norm_layer)
+
+#CTRNN
+root = './ctrnn_mix_goal_0.85_seed22222_lr0.0001_trainloss0.00110_epoch100.h5'
 batch_size = None
 seq_len = 64
 augmentation_params = None
-no_norm_layer = False
 single_step = True
-model = generate_ncp_model(seq_len, IMAGE_SHAPE, augmentation_params, batch_size, DEFAULT_NCP_SEED, single_step, no_norm_layer)
+no_norm_layer = False
+
+decay_rate: float = 0.85
+lr: float = 0.0001
+rnn_sizes = [252]
+model = generate_ctrnn_model(rnn_sizes, seq_len, IMAGE_SHAPE, ct_network_type='ctrnn', single_step = True)
+
+
+#LSTMs
+# root = './lstm_mix_goal_0.85_seed22222_lr0.0001_trainloss0.00103_epoch100.h5'
+# batch_size = None
+# seq_len = 64
+# augmentation_params = None
+# no_norm_layer = False
+# single_step = True
+# rnn_sizes = [193]
+# model = generate_lstm_model(rnn_sizes, seq_len, IMAGE_SHAPE, single_step = True)
+
 model.load_weights(root)
 
 hiddens = generate_hidden_list(model= model, return_numpy=True)
@@ -150,20 +179,17 @@ if __name__ == '__main__':
 
         # Main control loop
         while not rospy.is_shutdown():
-            if current_height < 3 and MODEL_MODE == False:  # If below the target height (account for some margin)
+            if current_height < z_initial - 0.1 and MODEL_MODE == False:  # If below the target height (account for some margin)
                 #rospy.loginfo("Ascending... Current height: {:.2f} m".format(current_height))
                 velocity_cmd.linear.z = 1.0  # Ascend at 1.0 m/s
                 # Publish the velocity command
                 vel_publisher.publish(velocity_cmd)
-            if current_height >= 4:
-                velocity_cmd.linear.z = 0.0  # Ascend at 1.0 m/s
-                # Publish the velocity command
-                vel_publisher.publish(velocity_cmd)
-            #     MODEL_MODE = True
-            # if MODEL_MODE :
-            #     model_prediction()
-            #     #rospy.loginfo("Hovering at target height: {:.2f} m".format(current_height))
-            #     vel_publisher.publish(model_vel)
+            if current_height >= z_initial:
+                MODEL_MODE = True
+            if MODEL_MODE :
+                model_prediction()
+                #rospy.loginfo("Hovering at target height: {:.2f} m".format(current_height))
+                vel_publisher.publish(model_vel)
             
 
             # Sleep to maintain the loop rate

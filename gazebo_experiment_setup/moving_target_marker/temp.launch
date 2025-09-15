@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Start Gazebo with empty world -->
+  <include file="$(find hector_gazebo_worlds)/launch/start.launch"/>
+
+  <!-- Spawn Hector Quadrotor with downward camera -->
+  
+  
+  <!-- Spawn the Husky model in Gazebo -->
+  <!--node name="spawn_husky_model" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model husky -x 0 -y 0 -z 0" /-->
+  <rosparam command="load" file="$(find husky_control)/config/control.yaml"/>
+  <include file="$(find husky_control)/launch/control.launch"></include> 
+  <param name="robot_description" command="$(find xacro)/xacro '$(find rover_tracking)/models/custom_husky/husky.urdf.xacro'"/>
+  <node name="spawn_husky_model" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model husky -x 0 -y 0 -z 0" />
+  
+
+</launch>
+
+
