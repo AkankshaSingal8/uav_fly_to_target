@@ -2,7 +2,13 @@
 
 This repository contains the dataset, code for model architecture and training and gazebo environment for experimentation. Model architecture, training hyper-parameters and NCP parameters.
 
-### Table: Model Architecture Summary
+### Creating Conda Environment
+Clone this github repository
+conda env create -f environment.yml
+conda activate causality
+
+
+### Table: NCP Model Architecture Summary
 
 | **Layer (Type)**                        | **Activation** | **Param #**  |
 |------------------------------------------|--------------|--------------|
@@ -24,7 +30,7 @@ This repository contains the dataset, code for model architecture and training a
 
 ---
 
-### Table: CNN Architecture
+### Table: Backbone CNN Architecture
 
 | **Layer Type**  | **Input Dim.**  | **Filters** | **Kernel Size** | **Stride** |
 |----------------|----------------|-------------|-----------------|------------|
@@ -62,3 +68,5 @@ This repository contains the dataset, code for model architecture and training a
 | LR Decay Rate  | 0.85      |
 
 ![image](https://github.com/user-attachments/assets/d4cf0343-529e-4ff4-bcb2-7077a235e38a)
+
+Some of the code is referenced from: https://github.com/makramchahine/drone_causality/tree/main
