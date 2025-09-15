@@ -28,7 +28,7 @@ dependencies:
   - freetype=2.11.0=h70c0345_0
   - glib=2.69.1=h4ff587b_1
   - gst-plugins-base=1.14.0=h8213a91_2
-  - gstreamer=1.14.0=h28cd5cc_2
+  - gstreamer=1.14.i0=h28cd5cc_2
   - icu=58.2=he6710b0_3
   - importlib_metadata=4.11.3=hd3eb1b0_0
   - intel-openmp=2021.4.0=h06a4308_3561
@@ -149,7 +149,7 @@ dependencies:
     - imageio==2.18.0
     - importlib-metadata==4.10.0
     - importlib-resources==5.4.0
-    - install==1.3.5
+    #- install==1.3.5
     - keras-ncp==2.0.5
     - keras-preprocessing==1.1.2
     - keras-tcn==3.4.2
