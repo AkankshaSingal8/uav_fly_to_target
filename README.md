@@ -3,9 +3,14 @@
 This repository contains the dataset, code for model architecture and training and gazebo environment for experimentation. Model architecture, training hyper-parameters and NCP parameters.
 
 ### Creating Conda Environment
-Clone this github repository
+Clone this GitHub repository and set up the environment:
+
+```bash
+git clone <repository_link>
+cd <repository_name>
 conda env create -f environment.yml
 conda activate causality
+```
 
 
 ### Table: NCP Model Architecture Summary
